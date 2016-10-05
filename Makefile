@@ -458,6 +458,7 @@ COMMON_SRC = \
             rx/pwm.c \
             rx/rx.c \
             rx/rx_spi.c \
+            rx/crsf.c \
             rx/sbus.c \
             rx/spektrum.c \
             rx/sumd.c \
@@ -493,7 +494,8 @@ HIGHEND_SRC = \
             telemetry/frsky.c \
             telemetry/hott.c \
             telemetry/smartport.c \
-            telemetry/ltm.c
+            telemetry/ltm.c \
+            telemetry/crsf.c
 
 ifeq ($(TARGET),$(filter $(TARGET),$(F4_TARGETS)))
 VCP_SRC = \

@@ -41,6 +41,7 @@
 #include "telemetry/smartport.h"
 #include "telemetry/ltm.h"
 #include "telemetry/jetiexbus.h"
+#include "telemetry/crsf.h"
 
 static telemetryConfig_t *telemetryConfig;
 
@@ -56,6 +57,7 @@ void telemetryInit(void)
     initSmartPortTelemetry(telemetryConfig);
     initLtmTelemetry(telemetryConfig);
     initJetiExBusTelemetry(telemetryConfig);
+    initCrsfTelemetry(telemetryConfig);
 
     telemetryCheckState();
 }
@@ -88,6 +90,7 @@ void telemetryCheckState(void)
     checkSmartPortTelemetryState();
     checkLtmTelemetryState();
     checkJetiExBusTelemetryState();
+    checkCrsfTelemetryState();
 }
 
 void telemetryProcess(uint32_t currentTime, rxConfig_t *rxConfig, uint16_t deadband3d_throttle)
@@ -97,6 +100,7 @@ void telemetryProcess(uint32_t currentTime, rxConfig_t *rxConfig, uint16_t deadb
     handleSmartPortTelemetry();
     handleLtmTelemetry();
     handleJetiExBusTelemetry();
+    handleCrsfTelemetry(currentTime);
 }
 
 #endif
