@@ -140,45 +140,40 @@ static void crsfDataReceive(uint16_t c)
     if (crsfFramePosition == 0) {
         crsfFrameStartAt = now;
     }
-    const int frameLength = crsfFramePosition < 3 ? 3 : crsfFrame.bytes[2];
+    // assume frame is 5 bytes long until we have received the frame length
+    const int frameLength = crsfFramePosition < 3 ? 5 : crsfFrame.frame.frameLength;
 
     if (crsfFramePosition < frameLength) {
         crsfFrame.bytes[crsfFramePosition++] = (uint8_t)c;
-        if (crsfFramePosition < frameLength) {
-            crsfFrameDone = false;
-        } else {
-            crsfFrameDone = true;
-        }
+        crsfFrameDone = crsfFramePosition < frameLength ? false : true;
     }
 }
 
 uint8_t crsfFrameStatus(void)
 {
-    if (!crsfFrameDone) {
-        return RX_FRAME_PENDING;
-    }
-    crsfFrameDone = false;
-
-    if (crsfFrame.frame.type == CRSF_FRAMETYPE_RC_CHANNELS_PACKED) {
-        // unpack the RC channels
-        const crsfPayloadRcChannelsPacked_t* rcChannels = (crsfPayloadRcChannelsPacked_t*)&crsfFrame.frame.payload;
-        crsfChannelData[0] = rcChannels->chan0;
-        crsfChannelData[1] = rcChannels->chan1;
-        crsfChannelData[2] = rcChannels->chan2;
-        crsfChannelData[3] = rcChannels->chan3;
-        crsfChannelData[4] = rcChannels->chan4;
-        crsfChannelData[5] = rcChannels->chan5;
-        crsfChannelData[6] = rcChannels->chan6;
-        crsfChannelData[7] = rcChannels->chan7;
-        crsfChannelData[8] = rcChannels->chan8;
-        crsfChannelData[9] = rcChannels->chan9;
-        crsfChannelData[10] = rcChannels->chan10;
-        crsfChannelData[11] = rcChannels->chan11;
-        crsfChannelData[12] = rcChannels->chan12;
-        crsfChannelData[13] = rcChannels->chan13;
-        crsfChannelData[14] = rcChannels->chan14;
-        crsfChannelData[15] = rcChannels->chan15;
-        return RX_FRAME_COMPLETE;
+    if (crsfFrameDone) {
+        crsfFrameDone = false;
+        if (crsfFrame.frame.type == CRSF_FRAMETYPE_RC_CHANNELS_PACKED) {
+            // unpack the RC channels
+            const crsfPayloadRcChannelsPacked_t* rcChannels = (crsfPayloadRcChannelsPacked_t*)&crsfFrame.frame.payload;
+            crsfChannelData[0] = rcChannels->chan0;
+            crsfChannelData[1] = rcChannels->chan1;
+            crsfChannelData[2] = rcChannels->chan2;
+            crsfChannelData[3] = rcChannels->chan3;
+            crsfChannelData[4] = rcChannels->chan4;
+            crsfChannelData[5] = rcChannels->chan5;
+            crsfChannelData[6] = rcChannels->chan6;
+            crsfChannelData[7] = rcChannels->chan7;
+            crsfChannelData[8] = rcChannels->chan8;
+            crsfChannelData[9] = rcChannels->chan9;
+            crsfChannelData[10] = rcChannels->chan10;
+            crsfChannelData[11] = rcChannels->chan11;
+            crsfChannelData[12] = rcChannels->chan12;
+            crsfChannelData[13] = rcChannels->chan13;
+            crsfChannelData[14] = rcChannels->chan14;
+            crsfChannelData[15] = rcChannels->chan15;
+            return RX_FRAME_COMPLETE;
+        }
     }
     return RX_FRAME_PENDING;
 }
