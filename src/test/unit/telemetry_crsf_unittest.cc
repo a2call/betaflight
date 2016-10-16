@@ -130,7 +130,10 @@ TEST(TelemetryCrsfTest, TestGPS)
 TEST(TelemetryCrsfTest, TestBattery)
 {
     uint8_t frame[CRSF_FRAME_SIZE_MAX];
+    batteryConfig_t workingBatteryConfig;
 
+    batteryConfig = &workingBatteryConfig;
+    memset(batteryConfig, 0, sizeof(batteryConfig_t));
     vbat = 0; // 0.1V units
     int frameLen = getCrsfFrame(frame, CRSF_FRAME_BATTERY_SENSOR);
     EXPECT_EQ(CRSF_FRAME_BATTERY_SENSOR_PAYLOAD_SIZE + 4, frameLen);
@@ -148,9 +151,8 @@ TEST(TelemetryCrsfTest, TestBattery)
     EXPECT_EQ(crfsCrc(frame, frameLen), frame[11]);
 
     vbat = 33; // 3.3V = 3300 mv
-//    amperageMeter_t *amperageMeter = getAmperageMeter((amperageMeter_e)batteryConfig()->amperageMeterSource);
-//    amperageMeter->amperage = 2960; // = 29.60A = 29600mA - amperage is in 0.01A steps
-//    batteryConfig()->batteryCapacity = 1234;
+    amperage = 2960; // = 29.60A = 29600mA - amperage is in 0.01A steps
+    batteryConfig->batteryCapacity = 1234;
     frameLen = getCrsfFrame(frame, CRSF_FRAME_BATTERY_SENSOR);
     voltage = frame[3] << 8 | frame[4]; // mV * 100
     EXPECT_EQ(33, voltage);
